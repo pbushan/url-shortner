@@ -1,0 +1,25 @@
+version: "3.1"
+services:
+  redis-urlshortner:
+    image: redis:latest
+    command: ["redis-server", "--bind", "redis-urlshortner", "--port", "6379"]
+    hostname: redis-urlshortner
+    volumes:
+      - redis_data:/data
+    ports:
+      - 6379:6379
+
+  urlshortner:
+    build: .
+    ports:
+      - 80:80
+    environment:
+      - spring_redis_host=redis-urlshortner
+      - server_port=80
+      - redis_ttl=17280000
+    depends_on:
+      - redis-urlshortner
+
+volumes:
+  redis_data:
+    driver: local
